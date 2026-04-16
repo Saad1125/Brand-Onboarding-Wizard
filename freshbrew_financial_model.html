@@ -1,0 +1,212 @@
+
+<h2 class="sr-only">FreshBrew QSR financial model — single outlet P&L, payback period, 3-year Scale100x projections, and sensitivity table</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.fm{font-family:var(--font-sans,sans-serif);color:var(--color-text-primary);padding:8px 0}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0}
+.tab{padding:8px 16px;font-size:13px;cursor:pointer;border-radius:6px 6px 0 0;color:var(--color-text-secondary);border:0.5px solid transparent;border-bottom:none;position:relative;top:1px}
+.tab.active{color:var(--color-text-primary);background:var(--color-background-primary);border-color:var(--color-border-tertiary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;letter-spacing:.3px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:6px 8px;color:var(--color-text-secondary);font-weight:400;border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);font-family:monospace;font-size:11px;color:var(--color-text-primary)}
+td.label{font-family:var(--font-sans,sans-serif);font-size:12px;color:var(--color-text-secondary)}
+td.pos{color:#059669}td.neg{color:#DC2626}td.total{font-weight:500;color:var(--color-text-primary)}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.metric{background:var(--color-background-secondary);border-radius:8px;padding:12px}
+.metric-lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric-val{font-size:20px;font-weight:500;font-family:monospace}
+.metric-val.green{color:#059669}.metric-val.blue{color:#2563EB}.metric-val.amber{color:#D97706}
+.chart-wrap{position:relative;width:100%;height:220px;margin-bottom:16px}
+.note{font-size:11px;color:var(--color-text-tertiary);margin-top:12px;line-height:1.5;padding:10px;background:var(--color-background-secondary);border-radius:6px}
+.sens-table{margin-top:4px}
+.sens-table td{text-align:center}.sens-table td.label{text-align:left}
+.highlight{background:#2563EB18;font-weight:500}
+</style>
+
+<div class="fm">
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('outlet')">Single outlet P&L</div>
+  <div class="tab" onclick="switchTab('s100x')">Scale100x 3-yr projection</div>
+  <div class="tab" onclick="switchTab('sens')">Sensitivity</div>
+  <div class="tab" onclick="switchTab('assum')">Assumptions</div>
+</div>
+
+<div id="outlet" class="panel active">
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-lbl">Monthly revenue (full run rate)</div><div class="metric-val blue">₹8,00,000</div></div>
+    <div class="metric"><div class="metric-lbl">Monthly net profit (full run rate)</div><div class="metric-val green" id="m-np">₹—</div></div>
+    <div class="metric"><div class="metric-lbl">Payback period</div><div class="metric-val amber" id="m-pb">— months</div></div>
+  </div>
+  <div class="section-title">Month-by-month P&L — Year 1 (single franchise outlet)</div>
+  <div style="overflow-x:auto">
+  <table id="outletTable">
+    <tr><th>Month</th><th>Revenue</th><th>Food cost</th><th>Labour</th><th>Mgmt fee</th><th>Other opex</th><th>Gross profit</th><th>Scale100x share</th><th>Franchisee net</th><th>Cum. investment recov.</th></tr>
+  </table>
+  </div>
+  <div class="note">Ramp-up: months 1–6 scale revenue linearly from 0 to full run-rate. Month 7 onward = ₹8,00,000/month. Rent (₹60,000) borne by franchisee and included in investment recovery calc. Franchise setup cost: ₹12,00,000 (one-time).</div>
+</div>
+
+<div id="s100x" class="panel">
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-lbl">Year 1 total revenue (Scale100x)</div><div class="metric-val blue" id="y1rev">₹—</div></div>
+    <div class="metric"><div class="metric-lbl">Year 2 total revenue</div><div class="metric-val blue" id="y2rev">₹—</div></div>
+    <div class="metric"><div class="metric-lbl">Year 3 total revenue</div><div class="metric-val blue" id="y3rev">₹—</div></div>
+  </div>
+  <div class="section-title">Annual P&L — Scale100x (base case)</div>
+  <table id="s100xTable">
+    <tr><th>Year</th><th>Outlets (avg active)</th><th>Mgmt fee revenue</th><th>Profit share revenue</th><th>Total revenue</th><th>Est. platform cost (30%)</th><th>Net profit</th></tr>
+  </table>
+  <div style="margin-top:20px" class="section-title">Revenue ramp — Scale100x cumulative</div>
+  <div class="chart-wrap"><canvas id="rampChart" role="img" aria-label="Bar chart showing Scale100x annual revenue growing from Year 1 to Year 3">Revenue grows from Year 1 to Year 3.</canvas></div>
+  <div class="note">Outlet ramp: 20 in Y1, 50 in Y2, 100 in Y3. Each outlet has 6-month ramp-up. Average active outlets per year calculated accordingly. Scale100x earns: 10% mgmt fee on revenue + 40% of franchisee profit after costs. Platform costs estimated at 30% of revenue.</div>
+</div>
+
+<div id="sens" class="panel">
+  <div class="section-title">Sensitivity: payback period (months) vs monthly revenue</div>
+  <table class="sens-table">
+    <tr><th style="width:160px">Monthly revenue</th><th>₹6,00,000</th><th>₹8,00,000</th><th>₹10,00,000</th></tr>
+    <tr><td class="label">Setup cost ₹12,00,000</td><td id="s1" class="neg">—</td><td id="s2" class="highlight">—</td><td id="s3" class="pos">—</td></tr>
+  </table>
+  <div style="margin-top:20px" class="section-title">Franchisee monthly profit at different revenue levels</div>
+  <div class="chart-wrap" style="height:180px"><canvas id="sensChart" role="img" aria-label="Bar chart comparing franchisee monthly net profit at three revenue scenarios">Franchise profit comparison at different revenue levels.</canvas></div>
+  <div class="note">Payback = ₹12,00,000 setup ÷ average monthly net cash flow to franchisee after all costs and Scale100x share. Full ramp-rate assumed (month 7+). Scale100x takes 40% of post-cost profit + 10% mgmt fee.</div>
+</div>
+
+<div id="assum" class="panel">
+  <table>
+    <tr><th style="width:220px">Assumption</th><th>Value</th><th>Notes</th></tr>
+    <tr><td class="label">Monthly revenue per outlet</td><td>₹8,00,000</td><td class="label">Full run-rate from month 7</td></tr>
+    <tr><td class="label">Food cost</td><td>32%</td><td class="label">₹2,56,000/month</td></tr>
+    <tr><td class="label">Labour cost</td><td>18%</td><td class="label">₹1,44,000/month</td></tr>
+    <tr><td class="label">Rent</td><td>₹60,000/month</td><td class="label">Borne by franchise partner</td></tr>
+    <tr><td class="label">Other operating expenses</td><td>₹40,000/month</td><td class="label">Utilities, consumables, misc</td></tr>
+    <tr><td class="label">Scale100x mgmt fee</td><td>10% of revenue</td><td class="label">₹80,000/month at full run-rate</td></tr>
+    <tr><td class="label">Profit share</td><td>60% franchisee / 40% Scale100x</td><td class="label">On net profit after all costs</td></tr>
+    <tr><td class="label">Franchise setup investment</td><td>₹12,00,000 (one-time)</td><td class="label">Borne by franchise partner</td></tr>
+    <tr><td class="label">Revenue ramp-up</td><td>6 months</td><td class="label">Linear from 0 to full rev, month 7 = 100%</td></tr>
+    <tr><td class="label">Outlet targets</td><td>Y1: 20 | Y2: 50 | Y3: 100</td><td class="label">New outlets each year</td></tr>
+    <tr><td class="label">Scale100x platform cost</td><td>30% of gross revenue</td><td class="label">Estimated (tech, ops, sales)</td></tr>
+    <tr><td class="label">Royalty %</td><td>Not separately charged</td><td class="label">Mgmt fee + profit share covers this</td></tr>
+  </table>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function fmt(n){return'₹'+Math.round(n).toLocaleString('en-IN')}
+function fmtL(n){if(n>=10000000)return'₹'+( n/10000000).toFixed(2)+'Cr';if(n>=100000)return'₹'+(n/100000).toFixed(1)+'L';return fmt(n)}
+
+const REV=800000,FC=0.32,LC=0.18,RENT=60000,OPEX=40000,MGMT=0.10,PSHARE_S100X=0.40,SETUP=1200000;
+
+function monthlyCalc(rev){
+  const fc=rev*FC,lc=rev*LC,mgmt=rev*MGMT;
+  const grossProfit=rev-fc-lc-RENT-OPEX-mgmt;
+  const s100xShare=Math.max(0,grossProfit*PSHARE_S100X);
+  const franchiseeNet=Math.max(0,grossProfit-s100xShare);
+  return{rev,fc,lc,mgmt,grossProfit,s100xShare,franchiseeNet};
+}
+
+function buildOutletTable(){
+  const tbody=document.getElementById('outletTable');
+  let cumRecov=0,cumProfit=0;
+  const rows=[];
+  for(let m=1;m<=12;m++){
+    const rampFactor=m<=6?m/6:1;
+    const rev=REV*rampFactor;
+    const c=monthlyCalc(rev);
+    cumProfit+=c.franchiseeNet;
+    const recov=Math.min(cumProfit,SETUP);
+    rows.push({m,c,recov,done:cumProfit>=SETUP});
+  }
+  rows.forEach(({m,c,recov,done})=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="label">M${m}</td><td>${fmt(c.rev)}</td><td class="neg">(${fmt(c.fc)})</td><td class="neg">(${fmt(c.lc)})</td><td class="neg">(${fmt(c.mgmt)})</td><td class="neg">(${fmt(OPEX)})</td><td class="${c.grossProfit>=0?'pos':'neg'}">${fmt(c.grossProfit)}</td><td class="neg">(${fmt(c.s100xShare)})</td><td class="${c.franchiseeNet>=0?'pos':'neg'}">${fmt(c.franchiseeNet)}</td><td class="${done?'pos':''}">${fmt(recov)} ${done?'✓':''}</td>`;
+    tbody.appendChild(tr);
+  });
+  const fullC=monthlyCalc(REV);
+  document.getElementById('m-np').textContent=fmt(fullC.franchiseeNet);
+  let pb=0,cum=0;
+  for(let m=1;m<=60;m++){
+    const r=m<=6?REV*m/6:REV;
+    const c=monthlyCalc(r);
+    cum+=c.franchiseeNet;
+    if(cum>=SETUP){pb=m;break;}
+  }
+  document.getElementById('m-pb').textContent=pb+' months';
+}
+
+function buildS100xTable(){
+  const tbody=document.getElementById('s100xTable');
+  const targets=[20,50,100];
+  const prevTotals=[0,20,70];
+  let chartY=[],chartP=[];
+  targets.forEach((newOutlets,yi)=>{
+    const totalOutlets=prevTotals[yi]+newOutlets;
+    let yearRev=0,yearProfit=0;
+    for(let m=1;m<=12;m++){
+      let activeOutlets=0;
+      for(let o=1;o<=totalOutlets;o++){
+        const outletStartMonth=o<=prevTotals[yi]?0:(o-prevTotals[yi]);
+        const monthsSinceStart=m-outletStartMonth;
+        const ramp=monthsSinceStart<=0?0:Math.min(monthsSinceStart/6,1);
+        activeOutlets+=ramp;
+      }
+      const rev=REV*activeOutlets;
+      const c=monthlyCalc(rev);
+      yearRev+=c.mgmt+(c.s100xShare);
+      yearProfit+=c.s100xShare;
+    }
+    const mgmtRev=yearRev-yearProfit;
+    const totalRev=yearRev;
+    const platformCost=totalRev*0.30;
+    const netProfit=totalRev-platformCost;
+    chartY.push(totalRev);chartP.push(netProfit);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="label">Year ${yi+1}</td><td>${Math.round(totalOutlets/2+prevTotals[yi]/2)}</td><td>${fmtL(mgmtRev)}</td><td>${fmtL(yearProfit)}</td><td class="pos">${fmtL(totalRev)}</td><td class="neg">(${fmtL(platformCost)})</td><td class="pos">${fmtL(netProfit)}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('y1rev').textContent=fmtL(chartY[0]);
+  document.getElementById('y2rev').textContent=fmtL(chartY[1]);
+  document.getElementById('y3rev').textContent=fmtL(chartY[2]);
+  new Chart(document.getElementById('rampChart'),{type:'bar',data:{labels:['Year 1','Year 2','Year 3'],datasets:[{label:'Total revenue',data:chartY,backgroundColor:'#2563EB',borderRadius:4},{label:'Net profit',data:chartP,backgroundColor:'#10B981',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtL(v)},grid:{color:'rgba(255,255,255,.06)'}},x:{grid:{display:false}}}}});
+  const leg=document.createElement('div');
+  leg.style.cssText='display:flex;gap:16px;font-size:11px;color:var(--color-text-secondary);margin-top:6px';
+  leg.innerHTML='<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#2563EB;display:inline-block"></span>Total revenue</span><span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#10B981;display:inline-block"></span>Net profit</span>';
+  document.getElementById('rampChart').parentElement.after(leg);
+}
+
+function buildSens(){
+  const revs=[600000,800000,1000000];
+  const pbs=revs.map(r=>{
+    let cum=0;
+    for(let m=1;m<=120;m++){
+      const rev=m<=6?r*m/6:r;
+      const c=monthlyCalc(rev);
+      cum+=c.franchiseeNet;
+      if(cum>=SETUP)return m;
+    }
+    return'>120';
+  });
+  ['s1','s2','s3'].forEach((id,i)=>{
+    document.getElementById(id).textContent=pbs[i]+' mo';
+  });
+  const profits=revs.map(r=>monthlyCalc(r).franchiseeNet);
+  new Chart(document.getElementById('sensChart'),{type:'bar',data:{labels:['₹6L/mo','₹8L/mo','₹10L/mo'],datasets:[{label:'Franchisee monthly profit',data:profits,backgroundColor:['#EF4444','#2563EB','#10B981'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(255,255,255,.06)'}},x:{grid:{display:false}}}}});
+}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['outlet','s100x','sens','assum'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.panel').forEach(p=>{
+    p.classList.toggle('active',p.id===id);
+  });
+}
+
+buildOutletTable();
+buildS100xTable();
+buildSens();
+</script>
