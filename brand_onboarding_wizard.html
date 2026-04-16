@@ -1,0 +1,402 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#0A0A0F;color:#E2E8F0}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:10px 16px;background:#111118;border-radius:10px;border:0.5px solid #1E1E2E}
+.topbar-logo{font-size:14px;font-weight:500;color:#E2E8F0;letter-spacing:.5px}
+.ai-metric{font-size:12px;font-family:monospace;background:#0D1117;padding:5px 12px;border-radius:6px;border:0.5px solid #2563EB30}
+.ai-metric span.ai{color:#2563EB}
+.ai-metric span.hu{color:#10B981}
+.progress-bar-wrap{margin-bottom:24px}
+.step-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.step-label{font-size:11px;color:#64748B;transition:color .3s}
+.step-label.active{color:#2563EB;font-weight:500}
+.step-label.done{color:#10B981}
+.progress-track{height:4px;background:#1E1E2E;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563EB,#3B82F6);border-radius:2px;transition:width .4s ease}
+.card{background:#111118;border-radius:12px;border:0.5px solid #1E1E2E;padding:28px}
+.card-title{font-size:18px;font-weight:500;margin-bottom:4px}
+.card-sub{font-size:13px;color:#64748B;margin-bottom:24px}
+label{display:block;font-size:12px;color:#94A3B8;margin-bottom:6px;letter-spacing:.3px}
+input[type=text],select{width:100%;background:#0A0A0F;border:0.5px solid #1E1E2E;border-radius:8px;padding:10px 12px;color:#E2E8F0;font-size:14px;outline:none;transition:border .2s}
+input[type=text]:focus,select:focus{border-color:#2563EB}
+select option{background:#111118}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tag{padding:5px 12px;border-radius:20px;font-size:12px;background:#1E1E2E;color:#94A3B8;cursor:pointer;border:0.5px solid transparent;transition:all .2s}
+.tag.sel{background:#2563EB20;color:#60A5FA;border-color:#2563EB40}
+.drop-zone{border:1.5px dashed #1E1E2E;border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:#0A0A0F;margin-top:16px}
+.drop-zone:hover,.drop-zone.drag{border-color:#2563EB;background:#2563EB08}
+.drop-icon{font-size:28px;margin-bottom:8px}
+.drop-text{font-size:13px;color:#64748B}
+.drop-text b{color:#2563EB}
+.file-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.file-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0A0A0F;border-radius:8px;border:0.5px solid #1E1E2E;font-size:12px;color:#94A3B8}
+.file-dot{width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0}
+.file-remove{margin-left:auto;cursor:pointer;color:#475569;font-size:14px}
+.chart-section{display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:center;margin-top:16px}
+.donut-wrap{position:relative;width:160px;height:160px}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-pct{font-size:22px;font-weight:500;color:#E2E8F0;font-family:monospace}
+.donut-lbl{font-size:10px;color:#64748B}
+.channel-list{display:flex;flex-direction:column;gap:10px}
+.ch-row{display:flex;align-items:center;gap:10px}
+.ch-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ch-name{font-size:12px;color:#94A3B8;width:70px}
+.ch-slider{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;outline:none;cursor:pointer}
+.ch-pct{font-size:12px;font-family:monospace;color:#E2E8F0;width:32px;text-align:right}
+.score-section{text-align:center;padding:16px 0}
+.score-circle{width:120px;height:120px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid #2563EB;background:#2563EB10;transition:all .6s}
+.score-num{font-size:36px;font-weight:500;font-family:monospace;color:#E2E8F0}
+.score-lbl{font-size:10px;color:#64748B}
+.sub-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.sub-card{background:#0A0A0F;border-radius:8px;padding:12px;border:0.5px solid #1E1E2E}
+.sub-name{font-size:11px;color:#64748B;margin-bottom:6px}
+.sub-bar-wrap{height:4px;background:#1E1E2E;border-radius:2px;overflow:hidden}
+.sub-bar{height:100%;border-radius:2px;transition:width 1s ease}
+.sub-val{font-size:12px;font-family:monospace;margin-top:5px}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;margin-top:6px}
+.badge.green{background:#10B98120;color:#10B981}
+.badge.amber{background:#F59E0B20;color:#F59E0B}
+.badge.red{background:#EF444420;color:#EF4444}
+.btn-row{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .2s}
+.btn-back{background:#1E1E2E;color:#94A3B8}
+.btn-back:hover{background:#2A2A3A;color:#E2E8F0}
+.btn-next{background:#2563EB;color:#fff}
+.btn-next:hover{background:#1D4ED8}
+.btn-next:disabled{opacity:.4;cursor:not-allowed}
+.hidden{display:none}
+.animate-in{animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.score-reveal{animation:revealScore .8s ease .2s both}
+@keyframes revealScore{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.step-done-icon{color:#10B981;font-size:12px;margin-right:4px}
+</style>
+
+<div class="wrap">
+  <div class="topbar">
+    <span class="topbar-logo">Scale100x.ai</span>
+    <span class="ai-metric"><span class="ai">AI: 76%</span> | <span class="hu">Human: 24%</span></span>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="step-labels">
+      <span class="step-label active" id="sl1">1. Brand identity</span>
+      <span class="step-label" id="sl2">2. Documents</span>
+      <span class="step-label" id="sl3">3. Revenue mix</span>
+      <span class="step-label" id="sl4">4. Readiness score</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog" style="width:25%"></div></div>
+  </div>
+
+  <!-- Step 1 -->
+  <div id="s1" class="card animate-in">
+    <div class="card-title">Brand identity</div>
+    <div class="card-sub">Tell us about your franchise brand</div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label>Brand name</label>
+        <input type="text" id="brandName" placeholder="e.g. FreshBrew QSR" />
+      </div>
+      <div class="grid2">
+        <div>
+          <label>Category</label>
+          <select id="brandCat">
+            <option value="">Select category</option>
+            <option>QSR / F&B</option>
+            <option>Retail</option>
+            <option>Education</option>
+            <option>Health & Wellness</option>
+            <option>EV / Automotive</option>
+            <option>Beauty & Personal Care</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Current outlets</label>
+          <input type="text" id="outlets" placeholder="e.g. 4" />
+        </div>
+      </div>
+      <div>
+        <label>Target cities for expansion</label>
+        <div class="tag-row" id="cityTags">
+          <span class="tag" onclick="toggleTag(this)">Mumbai</span>
+          <span class="tag" onclick="toggleTag(this)">Delhi NCR</span>
+          <span class="tag" onclick="toggleTag(this)">Bengaluru</span>
+          <span class="tag" onclick="toggleTag(this)">Hyderabad</span>
+          <span class="tag" onclick="toggleTag(this)">Pune</span>
+          <span class="tag" onclick="toggleTag(this)">Chennai</span>
+          <span class="tag" onclick="toggleTag(this)">Ahmedabad</span>
+          <span class="tag" onclick="toggleTag(this)">Kolkata</span>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-next" onclick="goTo(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="s2" class="card animate-in hidden">
+    <div class="card-title">Upload documents</div>
+    <div class="card-sub">Pitch decks, brochures, and financials help generate a more accurate readiness score</div>
+    <div class="drop-zone" id="dz" onclick="document.getElementById('fileInput').click()" ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
+      <div class="drop-icon">⬆</div>
+      <div class="drop-text"><b>Click to upload</b> or drag and drop</div>
+      <div style="font-size:11px;color:#475569;margin-top:4px">PDF, PPTX, XLSX — max 20MB each</div>
+    </div>
+    <input type="file" id="fileInput" multiple accept=".pdf,.pptx,.xlsx,.xls,.ppt" style="display:none" onchange="addFiles(this.files)" />
+    <div class="file-list" id="fileList"></div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-next" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="s3" class="card animate-in hidden">
+    <div class="card-title">Revenue breakdown</div>
+    <div class="card-sub">Drag sliders to set your approximate revenue mix by channel</div>
+    <div class="chart-section">
+      <div class="donut-wrap">
+        <canvas id="donutCanvas" width="160" height="160"></canvas>
+        <div class="donut-center">
+          <div class="donut-pct" id="topChannel">—</div>
+          <div class="donut-lbl">top channel</div>
+        </div>
+      </div>
+      <div class="channel-list">
+        <div class="ch-row">
+          <div class="ch-dot" style="background:#2563EB"></div>
+          <div class="ch-name">Organic</div>
+          <input type="range" class="ch-slider" id="sl_org" min="0" max="100" value="40" oninput="updateChannels()" style="accent-color:#2563EB">
+          <div class="ch-pct" id="pct_org">40%</div>
+        </div>
+        <div class="ch-row">
+          <div class="ch-dot" style="background:#10B981"></div>
+          <div class="ch-name">Paid</div>
+          <input type="range" class="ch-slider" id="sl_paid" min="0" max="100" value="30" oninput="updateChannels()" style="accent-color:#10B981">
+          <div class="ch-pct" id="pct_paid">30%</div>
+        </div>
+        <div class="ch-row">
+          <div class="ch-dot" style="background:#F59E0B"></div>
+          <div class="ch-name">Referral</div>
+          <input type="range" class="ch-slider" id="sl_ref" min="0" max="100" value="20" oninput="updateChannels()" style="accent-color:#F59E0B">
+          <div class="ch-pct" id="pct_ref">20%</div>
+        </div>
+        <div class="ch-row">
+          <div class="ch-dot" style="background:#8B5CF6"></div>
+          <div class="ch-name">Partner</div>
+          <input type="range" class="ch-slider" id="sl_part" min="0" max="100" value="10" oninput="updateChannels()" style="accent-color:#8B5CF6">
+          <div class="ch-pct" id="pct_part">10%</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-next" onclick="goTo(4)">Generate score →</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div id="s4" class="card animate-in hidden">
+    <div class="card-title">AI Franchise Readiness Score</div>
+    <div class="card-sub">Based on your brand profile, documents, and market benchmarks</div>
+    <div class="score-section" id="scoreSection" style="opacity:0">
+      <div class="score-circle score-reveal" id="scoreCircle">
+        <div class="score-num" id="scoreNum">—</div>
+        <div class="score-lbl">/ 100</div>
+      </div>
+      <div id="scoreBadge"></div>
+      <div class="sub-scores" id="subScores"></div>
+      <div style="margin-top:20px;padding:14px;background:#0A0A0F;border-radius:8px;border:0.5px solid #1E1E2E;text-align:left">
+        <div style="font-size:11px;color:#64748B;margin-bottom:6px">AI recommendation</div>
+        <div style="font-size:13px;color:#94A3B8;line-height:1.6" id="aiRec"></div>
+      </div>
+    </div>
+    <div id="scoreLoading" style="text-align:center;padding:32px">
+      <div style="font-size:13px;color:#64748B">Analysing brand profile...</div>
+      <div style="margin-top:12px;display:flex;justify-content:center;gap:6px" id="loadDots"></div>
+    </div>
+    <div class="btn-row" id="s4btns" style="display:none">
+      <button class="btn btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-next" onclick="finish()">Complete onboarding →</button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div id="sDone" class="card animate-in hidden" style="text-align:center;padding:40px">
+    <div style="font-size:40px;margin-bottom:12px">✓</div>
+    <div class="card-title" style="justify-content:center">Onboarding complete</div>
+    <div style="font-size:13px;color:#64748B;margin-top:8px">Your brand has been added to the Scale100x platform. An AI agent will begin generating your franchise collateral within the next 10 minutes.</div>
+    <div style="margin-top:20px;padding:14px;background:#10B98110;border-radius:8px;border:0.5px solid #10B98130">
+      <div style="font-size:12px;color:#10B981">Next step: Review your Franchise Model Card in the ROI Engine →</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep=1;
+const uploadedFiles=[];
+const COLORS=['#2563EB','#10B981','#F59E0B','#8B5CF6'];
+
+function toggleTag(el){el.classList.toggle('sel')}
+
+function goTo(n){
+  document.getElementById('s'+currentStep).classList.add('hidden');
+  currentStep=n;
+  const el=document.getElementById('s'+n)||document.getElementById('sDone');
+  el.classList.remove('hidden');
+  el.classList.remove('animate-in');
+  void el.offsetWidth;
+  el.classList.add('animate-in');
+  const pct=[25,50,75,100];
+  document.getElementById('prog').style.width=pct[n-1]+'%';
+  ['sl1','sl2','sl3','sl4'].forEach((id,i)=>{
+    const lbl=document.getElementById(id);
+    lbl.classList.remove('active','done');
+    if(i+1===n)lbl.classList.add('active');
+    else if(i+1<n)lbl.classList.add('done');
+  });
+  if(n===3)setTimeout(()=>{updateChannels();drawDonut([40,30,20,10])},100);
+  if(n===4)runScoreReveal();
+}
+
+function dzOver(e){e.preventDefault();document.getElementById('dz').classList.add('drag')}
+function dzLeave(){document.getElementById('dz').classList.remove('drag')}
+function dzDrop(e){e.preventDefault();dzLeave();addFiles(e.dataTransfer.files)}
+function addFiles(files){
+  Array.from(files).forEach(f=>{
+    uploadedFiles.push(f);
+    const div=document.createElement('div');
+    div.className='file-item';
+    div.innerHTML=`<div class="file-dot"></div><span>${f.name}</span><span style="color:#475569;margin-left:auto;font-size:11px">${(f.size/1024).toFixed(0)} KB</span><span class="file-remove" onclick="this.parentElement.remove()">✕</span>`;
+    document.getElementById('fileList').appendChild(div);
+  });
+}
+
+function updateChannels(){
+  const ids=['sl_org','sl_paid','sl_ref','sl_part'];
+  const vals=ids.map(id=>parseInt(document.getElementById(id).value));
+  const total=vals.reduce((a,b)=>a+b,0)||1;
+  const norm=vals.map(v=>Math.round(v/total*100));
+  const names=['Organic','Paid','Referral','Partner'];
+  const pctIds=['pct_org','pct_paid','pct_ref','pct_part'];
+  let maxV=0,maxN='';
+  norm.forEach((v,i)=>{
+    document.getElementById(pctIds[i]).textContent=v+'%';
+    if(v>maxV){maxV=v;maxN=names[i]}
+  });
+  document.getElementById('topChannel').textContent=maxN;
+  drawDonut(norm);
+}
+
+function drawDonut(vals){
+  const canvas=document.getElementById('donutCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const cx=80,cy=80,r=60,inner=38;
+  ctx.clearRect(0,0,160,160);
+  const total=vals.reduce((a,b)=>a+b,0)||1;
+  let angle=-Math.PI/2;
+  vals.forEach((v,i)=>{
+    const sweep=v/total*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,angle,angle+sweep);
+    ctx.closePath();
+    ctx.fillStyle=COLORS[i];
+    ctx.fill();
+    angle+=sweep;
+  });
+  ctx.beginPath();
+  ctx.arc(cx,cy,inner,0,Math.PI*2);
+  ctx.fillStyle='#111118';
+  ctx.fill();
+}
+
+function runScoreReveal(){
+  const loading=document.getElementById('scoreLoading');
+  const section=document.getElementById('scoreSection');
+  const btns=document.getElementById('s4btns');
+  loading.style.display='block';
+  section.style.opacity='0';
+  btns.style.display='none';
+  const dots=document.getElementById('loadDots');
+  dots.innerHTML='';
+  const msgs=['Analysing brand profile...','Checking unit economics...','Benchmarking against market data...','Generating readiness score...'];
+  let mi=0;
+  const msgEl=loading.querySelector('div');
+  const interval=setInterval(()=>{
+    const d=document.createElement('div');
+    d.style.cssText='width:6px;height:6px;border-radius:50%;background:#2563EB;animation:fadeUp .3s ease both';
+    dots.appendChild(d);
+    mi++;
+    if(mi<msgs.length)msgEl.textContent=msgs[mi];
+  },600);
+  setTimeout(()=>{
+    clearInterval(interval);
+    loading.style.display='none';
+    showScore();
+    section.style.opacity='1';
+    btns.style.display='flex';
+  },2800);
+}
+
+function showScore(){
+  const brandName=document.getElementById('brandName').value||'your brand';
+  const cat=document.getElementById('brandCat').value||'';
+  const outlets=parseInt(document.getElementById('outlets').value)||0;
+  let score=62;
+  if(outlets>=4)score+=8;
+  if(cat==='QSR / F&B')score+=6;
+  if(uploadedFiles.length>0)score+=7;
+  score=Math.min(score,95);
+  const num=document.getElementById('scoreNum');
+  let current=0;
+  const tgt=score;
+  const tick=setInterval(()=>{
+    current+=2;
+    num.textContent=Math.min(current,tgt);
+    if(current>=tgt)clearInterval(tick);
+  },30);
+  const badgeEl=document.getElementById('scoreBadge');
+  let badgeClass,badgeText;
+  if(score>=75){badgeClass='green';badgeText='Franchise Ready'}
+  else if(score>=55){badgeClass='amber';badgeText='Needs Improvement'}
+  else{badgeClass='red';badgeText='Not Ready'}
+  badgeEl.innerHTML=`<span class="badge ${badgeClass}">${badgeText}</span>`;
+  const subs=[
+    {name:'Brand strength',val:score>=75?78:score>=55?58:38,color:score>=75?'#10B981':'#F59E0B'},
+    {name:'Unit economics',val:score>=75?82:score>=55?61:44,color:score>=75?'#10B981':'#F59E0B'},
+    {name:'Scalability index',val:score>=75?71:score>=55?54:32,color:score>=75?'#2563EB':'#F59E0B'},
+    {name:'Market timing',val:score>=75?88:score>=55?72:55,color:'#10B981'},
+  ];
+  const sub=document.getElementById('subScores');
+  sub.innerHTML='';
+  subs.forEach((s,i)=>{
+    const bClass=s.val>=70?'green':s.val>=50?'amber':'red';
+    sub.innerHTML+=`<div class="sub-card"><div class="sub-name">${s.name}</div><div class="sub-bar-wrap"><div class="sub-bar" style="width:0%;background:${s.color}" id="subbar${i}"></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="sub-val" style="color:${s.color}">${s.val}/100</div><span class="badge ${bClass}" style="margin-top:0">${bClass==='green'?'Strong':bClass==='amber'?'Moderate':'Weak'}</span></div></div>`;
+    setTimeout(()=>{const b=document.getElementById('subbar'+i);if(b)b.style.width=s.val+'%'},300+i*150);
+  });
+  const recs={
+    green:`${brandName||'Your brand'} shows strong fundamentals for franchise expansion. Recommend prioritising Tier-2 city rollout within 90 days to capitalise on market timing advantage.`,
+    amber:`${brandName||'Your brand'} has solid brand awareness but unit economics need strengthening before aggressive expansion. Focus on optimising COGS and standardising SOPs in existing outlets first.`,
+    red:`${brandName||'Your brand'} is in early stages of franchise readiness. Recommend a 6-month preparation phase focused on brand documentation, P&L stabilisation, and a pilot franchise before broader rollout.`
+  };
+  document.getElementById('aiRec').textContent=recs[badgeClass];
+}
+
+function finish(){
+  document.getElementById('s4').classList.add('hidden');
+  const done=document.getElementById('sDone');
+  done.classList.remove('hidden');
+  done.classList.remove('animate-in');
+  void done.offsetWidth;
+  done.classList.add('animate-in');
+  document.getElementById('prog').style.width='100%';
+  ['sl1','sl2','sl3','sl4'].forEach(id=>document.getElementById(id).classList.add('done'));
+}
+</script>
